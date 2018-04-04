@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <h1>{{ title }}</h1>
+    <v-app>
+      <h1>{{ title }}</h1>
+    </v-app>
   </div>
 </template>
 
