@@ -50,5 +50,5 @@ module.exports = {
   performance: {
     hints: false,
   },
-  devtool: '#eval-source-map',
+  // devtool: '#eval-source-map',
 };

@@ -89,13 +89,19 @@ export default {
   },
   created() {
     const channels = JSON.parse(localStorage.getItem('channels'));
-    if (channels) this.channels = channels;
+    if (channels) {
+      this.channels = channels;
+    }
 
     const isMyChannelExists = localStorage.getItem('isMyChannelExists');
-    if (isMyChannelExists) this.isMyChannelExists = isMyChannelExists;
+    if (isMyChannelExists) {
+      this.isMyChannelExists = isMyChannelExists;
+    }
 
     const myChannelName = localStorage.getItem('myChannelName');
-    if (myChannelName) this.myChannelName = myChannelName;
+    if (myChannelName) {
+      this.myChannelName = myChannelName;
+    }
   },
   methods: {
     saveChannels() {
@@ -112,9 +118,9 @@ export default {
         this.myChannelName = '';
         this.saveUserChannel();
       } else {
+        this.isMyChannelExists = true;
         channel.isMy = true;
         this.myChannelName = channel.name;
-        this.isMyChannelExists = true;
         this.saveUserChannel();
       }
 
