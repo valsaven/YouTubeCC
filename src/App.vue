@@ -25,10 +25,16 @@
             :class="{ 'amber lighten-1': channel.isMy }"
           >
             <v-list-tile-action v-if="!isMyChannelExists">
-              <v-btn icon @click="markChannelAsMine(channel)">
-                <v-icon>{{`${channel.isMy ? 'thumb_up' : 'thumb_down'}`}}</v-icon>
+              <v-btn icon @click="selectChannel(channel)">
+                <v-icon>{{`${channel.isMy ? 'star' : 'person'}`}}</v-icon>
               </v-btn>
             </v-list-tile-action>
+            <v-list-tile-action v-else-if="channel.isMy">
+              <v-btn icon @click="selectChannel(channel)">
+                <v-icon>{{`${channel.isMy ? 'star' : 'person'}`}}</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+
             <v-list-tile-content>
               <v-list-tile-title>{{channel.subs}}</v-list-tile-title>
               <v-list-tile-sub-title>{{channel.name}}</v-list-tile-sub-title>
@@ -81,10 +87,16 @@ export default {
     }
   },
   methods: {
-    markChannelAsMine(channel) {
-      channel.isMy = true;
-      this.myChannelName = channel.name;
-      this.isMyChannelExists = true;
+    selectChannel(channel) {
+      if (this.isMyChannelExists) {
+        this.isMyChannelExists = false;
+        channel.isMy = false;
+        this.myChannelName = '';
+      } else {
+        channel.isMy = true;
+        this.myChannelName = channel.name;
+        this.isMyChannelExists = true;
+      }
     },
     getChannelData: async function(search) {
       try {
