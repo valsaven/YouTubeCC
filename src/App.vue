@@ -93,12 +93,12 @@ export default {
       this.channels = channels;
     }
 
-    const isMyChannelExists = localStorage.getItem('isMyChannelExists');
+    const isMyChannelExists = JSON.parse(localStorage.getItem('isMyChannelExists'));
     if (isMyChannelExists) {
       this.isMyChannelExists = isMyChannelExists;
     }
 
-    const myChannelName = localStorage.getItem('myChannelName');
+    const myChannelName = JSON.parse(localStorage.getItem('myChannelName'));
     if (myChannelName) {
       this.myChannelName = myChannelName;
     }
