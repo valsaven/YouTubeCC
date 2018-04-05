@@ -16,31 +16,29 @@
         </v-flex>
         <v-flex xs12 md12>
           <v-list subheader>
-          <v-subheader>Текущий рейтинг</v-subheader>
-
-          <v-list-tile avatar v-for="channel in orderedChannels" :key="channel.name" :class="{ 'amber lighten-1': channel.isMy }">
-            <v-list-tile-action v-if="!isMyChannelExists">
-              <v-btn icon @click="selectChannel(channel)">
-                <v-icon>{{`${channel.isMy ? 'star' : 'person'}`}}</v-icon>
-              </v-btn>
-            </v-list-tile-action>
-            <v-list-tile-action v-else-if="channel.isMy">
-              <v-btn icon @click="selectChannel(channel)">
-                <v-icon>{{`${channel.isMy ? 'star' : 'person'}`}}</v-icon>
-              </v-btn>
-            </v-list-tile-action>
-
-            <v-list-tile-content>
-              <v-list-tile-title>{{channel.subs}}</v-list-tile-title>
-              <v-list-tile-sub-title>{{channel.name}}</v-list-tile-sub-title>
-            </v-list-tile-content>
-            <v-list-tile-action v-if="!channel.isMy">
-              <v-btn icon @click="removeChannel(channel)">
-                <v-icon color="red lighten-1">remove_circle</v-icon>
-              </v-btn>
-            </v-list-tile-action>
-          </v-list-tile>
-        </v-list>
+            <v-subheader>Текущий рейтинг</v-subheader>
+            <v-list-tile avatar v-for="channel in orderedChannels" :key="channel.name" :class="{ 'amber lighten-1': channel.isMy }">
+              <v-list-tile-action v-if="!isMyChannelExists">
+                <v-btn icon @click="selectChannel(channel)">
+                  <v-icon>{{`${channel.isMy ? 'star' : 'person'}`}}</v-icon>
+                </v-btn>
+              </v-list-tile-action>
+              <v-list-tile-action v-else-if="channel.isMy">
+                <v-btn icon @click="selectChannel(channel)">
+                  <v-icon>{{`${channel.isMy ? 'star' : 'person'}`}}</v-icon>
+                </v-btn>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>{{channel.subs}}</v-list-tile-title>
+                <v-list-tile-sub-title>{{channel.name}}</v-list-tile-sub-title>
+              </v-list-tile-content>
+              <v-list-tile-action v-if="!channel.isMy">
+                <v-btn icon @click="removeChannel(channel)">
+                  <v-icon color="red lighten-1">remove_circle</v-icon>
+                </v-btn>
+              </v-list-tile-action>
+            </v-list-tile>
+          </v-list>
         </v-flex>
       </v-layout>
     </v-container>
@@ -91,20 +89,15 @@ export default {
     },
   },
   created() {
+    const isMyChannelExists = JSON.parse(localStorage.getItem('isMyChannelExists'));
+    const myChannelName = JSON.parse(localStorage.getItem('myChannelName'));
     const channels = JSON.parse(localStorage.getItem('channels'));
+
+    if (isMyChannelExists) this.isMyChannelExists = isMyChannelExists;
+    if (myChannelName) this.myChannelName = myChannelName;
     if (channels) {
       this.channels = channels;
       this.updateSubs(this.channels);
-    }
-
-    const isMyChannelExists = JSON.parse(localStorage.getItem('isMyChannelExists'));
-    if (isMyChannelExists) {
-      this.isMyChannelExists = isMyChannelExists;
-    }
-
-    const myChannelName = JSON.parse(localStorage.getItem('myChannelName'));
-    if (myChannelName) {
-      this.myChannelName = myChannelName;
     }
   },
   methods: {
@@ -178,7 +171,6 @@ export default {
     getChannelData: async function(search) {
       try {
         const type = this.isUsername ? 'forUsername' : 'id';
-
         const res = await axios.get(
           `https://www.googleapis.com/youtube/v3/channels?part=statistics&${type}=${search}&fields=${
             this.fields
