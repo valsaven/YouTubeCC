@@ -97,7 +97,7 @@ export default {
     if (myChannelName) this.myChannelName = myChannelName;
     if (channels) {
       this.channels = channels;
-      this.updateSubs(this.channels);
+      this.updateSubs();
     }
   },
   methods: {
@@ -108,7 +108,7 @@ export default {
       localStorage.setItem('isMyChannelExists', JSON.stringify(this.isMyChannelExists));
       localStorage.setItem('myChannelName', JSON.stringify(this.myChannelName));
     },
-    updateSubs(channels) {
+    updateSubs() {
       const updateChannel = async channel => {
         try {
           const res = await axios.get(
@@ -142,7 +142,7 @@ export default {
       };
 
       this.timer = setInterval(() => {
-        this.channels = updateChannels(channels);
+        this.channels = updateChannels(this.channels);
         this.saveChannels();
       }, 5000);
     },
