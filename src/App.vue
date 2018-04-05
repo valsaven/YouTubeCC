@@ -4,7 +4,7 @@
     <v-container fliud fill-height grid-list-md text-xs-center>
       <v-layout row wrap align-center justify-center>
         <v-flex xs12>
-          <h1>{{title}}</h1>
+          <h1>YouTubeCC</h1>
         </v-flex>
         <v-flex xs12>
           <v-form v-model="valid" ref="form" lazy-validation>
@@ -15,10 +15,7 @@
           </v-form>
         </v-flex>
         <v-flex xs12>
-          <v-select :items="orderValues" v-model="orderBy" label="Сортировать по ..." single-line></v-select>
-        </v-flex>
-        <v-flex xs12>
-          <v-list two-line subheader>
+          <v-list subheader>
           <v-subheader>Текущий рейтинг</v-subheader>
 
           <v-list-tile avatar v-for="channel in orderedChannels" :key="channel.name" :class="{ 'amber lighten-1': channel.isMy }">
@@ -53,7 +50,6 @@
 
 <script>
 import axios from 'axios';
-import orderBy from 'lodash/orderBy';
 
 class User {
   constructor(name, subs, isMy = false) {
@@ -73,51 +69,60 @@ export default {
       searchRules: [
         v => !!v || (this.isUsername ? 'Укажите имя пользователя' : 'Укажите ID канала'),
       ],
-      channels: [
-      ],
-      orderValues: [
-        { text: 'Сортировать по имени', value: 'name' },
-        { text: 'Сортировать по кол-ву подписчиков', value: 'subs' },
-      ],
+      channels: [],
       isUsername: true,
       isMyChannelExists: false,
       myChannelName: null,
-      orderBy: 'subs',
     };
   },
   computed: {
     selectedChannel() {
       return this.channels.find(channel => channel.name === this.myChannelName);
     },
-
-    orderedChannels: function() {
-      return orderBy(this.channels, this.orderBy, ['desc']);
+    orderedChannels() {
+      return this.channels
+        .sort((a, b) => {
+          return Number(a.subs) - Number(b.subs);
+        })
+        .reverse();
     },
   },
   created() {
     const channels = JSON.parse(localStorage.getItem('channels'));
+    if (channels) this.channels = channels;
 
-    if (channels) {
-      this.channels = channels;
-    }
+    const isMyChannelExists = localStorage.getItem('isMyChannelExists');
+    if (isMyChannelExists) this.isMyChannelExists = isMyChannelExists;
+
+    const myChannelName = localStorage.getItem('myChannelName');
+    if (myChannelName) this.myChannelName = myChannelName;
   },
   methods: {
+    saveChannels() {
+      localStorage.setItem('channels', JSON.stringify(this.channels));
+    },
+    saveUserChannel() {
+      localStorage.setItem('isMyChannelExists', JSON.stringify(this.isMyChannelExists));
+      localStorage.setItem('myChannelName', JSON.stringify(this.myChannelName));
+    },
     selectChannel(channel) {
       if (this.isMyChannelExists) {
         this.isMyChannelExists = false;
         channel.isMy = false;
         this.myChannelName = '';
+        this.saveUserChannel();
       } else {
         channel.isMy = true;
         this.myChannelName = channel.name;
         this.isMyChannelExists = true;
+        this.saveUserChannel();
       }
 
-      localStorage.setItem('channels', JSON.stringify(this.channels));
+      this.saveChannels();
     },
     removeChannel(channel) {
       this.channels = this.channels.filter(item => item.name !== channel.name);
-      localStorage.setItem('channels', JSON.stringify(this.channels));
+      this.saveChannels();
     },
     toggleOrder(name) {
       this.currentOrder = name;
@@ -143,7 +148,7 @@ export default {
 
         this.search = '';
         this.channels.push(new User(search, subs));
-        localStorage.setItem('channels', JSON.stringify(this.channels));
+        this.saveChannels();
       } catch (e) {
         console.error(e);
       }
