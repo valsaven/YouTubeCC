@@ -112,9 +112,12 @@ export default {
         this.myChannelName = channel.name;
         this.isMyChannelExists = true;
       }
+
+      localStorage.setItem('channels', JSON.stringify(this.channels));
     },
     removeChannel(channel) {
       this.channels = this.channels.filter(item => item.name !== channel.name);
+      localStorage.setItem('channels', JSON.stringify(this.channels));
     },
     toggleOrder(name) {
       this.currentOrder = name;
@@ -140,6 +143,7 @@ export default {
 
         this.search = '';
         this.channels.push(new User(search, subs));
+        localStorage.setItem('channels', JSON.stringify(this.channels));
       } catch (e) {
         console.error(e);
       }
