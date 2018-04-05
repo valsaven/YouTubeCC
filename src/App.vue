@@ -34,6 +34,11 @@
               <v-list-tile-title>{{channel.subs}}</v-list-tile-title>
               <v-list-tile-sub-title>{{channel.name}}</v-list-tile-sub-title>
             </v-list-tile-content>
+            <v-list-tile-action v-if="!channel.isMy">
+              <v-btn icon @click="removeChannel(channel)">
+                <v-icon color="red lighten-1">remove_circle</v-icon>
+              </v-btn>
+            </v-list-tile-action>
           </v-list-tile>
         </v-list>
         </v-flex>
@@ -104,6 +109,9 @@ export default {
         this.myChannelName = channel.name;
         this.isMyChannelExists = true;
       }
+    },
+    removeChannel(channel) {
+      this.channels = this.channels.filter(item => item.name !== channel.name);
     },
     toggleOrder(name) {
       this.currentOrder = name;
