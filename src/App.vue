@@ -73,6 +73,9 @@ export default {
       isUsername: true,
       isMyChannelExists: false,
       myChannelName: null,
+      apiKey: 'AIzaSyAGC8ADxI5-M2yoi4Pt_AHE2FpaH2Y6xpM',
+      fields: 'items/statistics/subscriberCount',
+      timer: '',
     };
   },
   computed: {
@@ -91,6 +94,7 @@ export default {
     const channels = JSON.parse(localStorage.getItem('channels'));
     if (channels) {
       this.channels = channels;
+      this.updateSubs(this.channels);
     }
 
     const isMyChannelExists = JSON.parse(localStorage.getItem('isMyChannelExists'));
@@ -110,6 +114,44 @@ export default {
     saveUserChannel() {
       localStorage.setItem('isMyChannelExists', JSON.stringify(this.isMyChannelExists));
       localStorage.setItem('myChannelName', JSON.stringify(this.myChannelName));
+    },
+    updateSubs(channels) {
+      const updateChannel = async channel => {
+        try {
+          const res = await axios.get(
+            `https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername=${
+              channel.name
+            }&fields=${this.fields}&key=${this.apiKey}`,
+          );
+
+          const data = res.data;
+          let subs = null;
+
+          if (data.items.length) {
+            subs = data.items[0].statistics.subscriberCount;
+          } else {
+            throw new Error(this.isUsername ? 'Неверное имя пользователя.' : 'Неверный ID канала.');
+          }
+
+          channel.subs = Number(subs);
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
+      const updateChannels = channels => {
+        for (let i = 0; i < channels.length; i++) {
+          let channel = channels[i];
+          updateChannel(channel);
+        }
+
+        return channels;
+      };
+
+      this.timer = setInterval(() => {
+        this.channels = updateChannels(channels);
+        this.saveChannels();
+      }, 5000);
     },
     selectChannel(channel) {
       if (this.isMyChannelExists) {
@@ -135,12 +177,12 @@ export default {
     },
     getChannelData: async function(search) {
       try {
-        const apiKey = 'AIzaSyAGC8ADxI5-M2yoi4Pt_AHE2FpaH2Y6xpM';
-        const fields = 'items/statistics/subscriberCount';
         const type = this.isUsername ? 'forUsername' : 'id';
 
         const res = await axios.get(
-          `https://www.googleapis.com/youtube/v3/channels?part=statistics&${type}=${search}&fields=${fields}&key=${apiKey}`,
+          `https://www.googleapis.com/youtube/v3/channels?part=statistics&${type}=${search}&fields=${
+            this.fields
+          }&key=${this.apiKey}`,
         );
 
         const data = res.data;
@@ -166,6 +208,7 @@ export default {
     },
     clear() {
       this.$refs.form.reset();
+      clearInterval(this.timer);
     },
   },
 };
