@@ -17,13 +17,8 @@
         <v-flex xs12>
           <v-list two-line subheader>
           <v-subheader>Текущий рейтинг</v-subheader>
-          <v-list-tile
-            avatar
-            v-for="channel in channels"
-            :key="channel.name"
-
-            :class="{ 'amber lighten-1': channel.isMy }"
-          >
+          <v-select :items="orderValues" v-model="orderBy" label="Сортировать по ..." single-line></v-select>
+          <v-list-tile avatar v-for="channel in orderedChannels" :key="channel.name" :class="{ 'amber lighten-1': channel.isMy }">
             <v-list-tile-action v-if="!isMyChannelExists">
               <v-btn icon @click="selectChannel(channel)">
                 <v-icon>{{`${channel.isMy ? 'star' : 'person'}`}}</v-icon>
@@ -50,6 +45,7 @@
 
 <script>
 import axios from 'axios';
+import orderBy from 'lodash/orderBy';
 
 class User {
   constructor(name, subs, isMy = false) {
@@ -69,14 +65,25 @@ export default {
       searchRules: [
         v => !!v || (this.isUsername ? 'Укажите имя пользователя' : 'Укажите ID канала'),
       ],
+      channels: [
+      ],
+      orderValues: [
+        { text: 'Имени', value: 'name' },
+        { text: 'Кол-ву подписчиков', value: 'subs' },
+      ],
       isUsername: true,
       isMyChannelExists: false,
       myChannelName: null,
+      orderBy: 'subs',
     };
   },
   computed: {
     selectedChannel() {
       return this.channels.find(channel => channel.name === this.myChannelName);
+    },
+
+    orderedChannels: function() {
+      return orderBy(this.channels, this.orderBy, ['desc']);
     },
   },
   created() {
@@ -97,6 +104,9 @@ export default {
         this.myChannelName = channel.name;
         this.isMyChannelExists = true;
       }
+    },
+    toggleOrder(name) {
+      this.currentOrder = name;
     },
     getChannelData: async function(search) {
       try {
