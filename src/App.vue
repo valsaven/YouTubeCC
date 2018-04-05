@@ -8,16 +8,19 @@
         </v-flex>
         <v-flex xs12>
           <v-form v-model="valid" ref="form" lazy-validation>
-            <v-switch :label="`${isUsername ? 'По имени пользователя' : 'По ID канала'}`" color="indigo" v-model="isUsername"></v-switch>
+            <v-switch :label="`${isUsername ? 'Добавить по имени пользователя' : 'Добавить по ID канала'}`" color="indigo" v-model="isUsername"></v-switch>
             <v-text-field :label="`${isUsername ? 'Имя пользователя' : 'ID канала'}`" v-model="search" :rules="searchRules" required></v-text-field>
             <v-btn @click="submit" :disabled="!valid">Добавить</v-btn>
             <v-btn @click="clear">Очистить</v-btn>
           </v-form>
         </v-flex>
         <v-flex xs12>
+          <v-select :items="orderValues" v-model="orderBy" label="Сортировать по ..." single-line></v-select>
+        </v-flex>
+        <v-flex xs12>
           <v-list two-line subheader>
           <v-subheader>Текущий рейтинг</v-subheader>
-          <v-select :items="orderValues" v-model="orderBy" label="Сортировать по ..." single-line></v-select>
+
           <v-list-tile avatar v-for="channel in orderedChannels" :key="channel.name" :class="{ 'amber lighten-1': channel.isMy }">
             <v-list-tile-action v-if="!isMyChannelExists">
               <v-btn icon @click="selectChannel(channel)">
@@ -73,8 +76,8 @@ export default {
       channels: [
       ],
       orderValues: [
-        { text: 'Имени', value: 'name' },
-        { text: 'Кол-ву подписчиков', value: 'subs' },
+        { text: 'Сортировать по имени', value: 'name' },
+        { text: 'Сортировать по кол-ву подписчиков', value: 'subs' },
       ],
       isUsername: true,
       isMyChannelExists: false,
