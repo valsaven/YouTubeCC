@@ -1,12 +1,12 @@
 <template>
 <div id="app">
   <v-app>
-    <v-container fliud fill-height grid-list-md text-xs-center>
-      <v-layout row wrap align-center justify-center>
-        <v-flex xs12>
+    <v-container fill-height grid-list-md text-xs-center>
+      <v-layout column align-center justify-center>
+        <v-flex xs12 md2>
           <h1>YouTubeCC</h1>
         </v-flex>
-        <v-flex xs12>
+        <v-flex xs12 md4>
           <v-form v-model="valid" ref="form" lazy-validation>
             <v-switch :label="`${isUsername ? 'Добавить по имени пользователя' : 'Добавить по ID канала'}`" color="indigo" v-model="isUsername"></v-switch>
             <v-text-field :label="`${isUsername ? 'Имя пользователя' : 'ID канала'}`" v-model="search" :rules="searchRules" required></v-text-field>
@@ -14,7 +14,7 @@
             <v-btn @click="clear">Очистить</v-btn>
           </v-form>
         </v-flex>
-        <v-flex xs12>
+        <v-flex xs12 md12>
           <v-list subheader>
           <v-subheader>Текущий рейтинг</v-subheader>
 
