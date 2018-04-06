@@ -12,7 +12,6 @@
           <v-form v-model="valid" ref="form" lazy-validation>
             <v-text-field label="ID канала" v-model="search" :rules="searchRules" required></v-text-field>
             <v-btn @click="submit" :disabled="!valid">Добавить</v-btn>
-            <v-btn @click="clear">Очистить</v-btn>
             <v-alert type="success" dismissible v-model="success.alert" transition="scale-transition">
               {{success.message}}
             </v-alert>
@@ -236,10 +235,8 @@ export default {
     submit() {
       if (this.$refs.form.validate()) {
         this.addChannel(this.search);
+        this.$refs.form.reset();
       }
-    },
-    clear() {
-      this.$refs.form.reset();
     },
   },
 };
