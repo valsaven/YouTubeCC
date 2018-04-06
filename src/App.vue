@@ -111,19 +111,27 @@ export default {
     updateSubs() {
       const updateChannel = async channel => {
         try {
-          const res = await axios.get(
+          let res = await axios.get(
             `https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername=${
               channel.name
             }&fields=${this.fields}&key=${this.apiKey}`,
           );
 
-          const data = res.data;
+          let data = res.data;
           let subs = null;
 
           if (data.items.length) {
             subs = data.items[0].statistics.subscriberCount;
           } else {
-            throw new Error(this.isUsername ? 'Неверное имя пользователя.' : 'Неверный ID канала.');
+            res = await axios.get(
+              `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${
+                channel.name
+              }&fields=${this.fields}&key=${this.apiKey}`,
+            );
+
+            data = res.data;
+            subs = data.items[0].statistics.subscriberCount;
+            // throw new Error(this.isUsername ? 'Неверное имя пользователя.' : 'Неверный ID канала.');
           }
 
           channel.subs = Number(subs);
