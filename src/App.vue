@@ -24,7 +24,8 @@
         <v-flex xs12>
           <v-list subheader>
             <v-subheader>Текущий рейтинг</v-subheader>
-            <v-list-tile avatar v-for="channel in orderedChannels" :key="channel.id" :class="{ 'amber lighten-1': channel.id === myChannelID }">
+            <v-list-tile avatar v-for="(channel, index) in orderedChannels" :key="channel.id" :class="{ 'amber lighten-1': channel.id === myChannelID }">
+              <v-list-tile class="mr-4">{{index}}</v-list-tile>
               <!-- Аватарка канала -->
               <v-list-tile-action>
                 <v-btn icon @click="selectChannel(channel)">
