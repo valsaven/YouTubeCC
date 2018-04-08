@@ -4,11 +4,11 @@
     <v-container fill-height grid-list-md text-xs-center>
       <v-layout column align-center justify-center>
         <!-- Header -->
-        <v-flex xs12 md2>
+        <v-flex xs2>
           <h1 class="header-title" @click="tile = !tile">YouTubeCC</h1>
         </v-flex>
         <!-- Форма добавления канала -->
-        <v-flex xs12 md4>
+        <v-flex xs4>
           <v-form v-model="valid" ref="form" lazy-validation>
             <v-text-field label="ID канала" v-model="search" :rules="searchRules" required></v-text-field>
             <v-btn @click="submit" :disabled="!valid">Добавить</v-btn>
@@ -21,7 +21,7 @@
           </v-form>
         </v-flex>
         <!-- Таблица рейтинга -->
-        <v-flex xs12 md12>
+        <v-flex xs12>
           <v-list subheader>
             <v-subheader>Текущий рейтинг</v-subheader>
             <v-list-tile avatar v-for="channel in orderedChannels" :key="channel.id" :class="{ 'amber lighten-1': channel.id === myChannelID }">
