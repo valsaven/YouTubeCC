@@ -59,6 +59,8 @@
 
 <script>
 import axios from 'axios';
+import addChannelForm from './components/addChannelForm';
+import channelsList from './components/channelsList';
 
 class Channel {
   constructor(id = '', title = '', description = '', thumbnailUrl = '', subscriberCount = 0) {
@@ -72,6 +74,7 @@ class Channel {
 
 export default {
   name: 'app',
+  components: { addChannelForm, channelsList },
   data() {
     return {
       title: 'YouTubeCC',
