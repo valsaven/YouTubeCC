@@ -9,16 +9,7 @@
         </v-flex>
         <!-- Форма добавления канала -->
         <v-flex xs4>
-          <v-form v-model="valid" ref="form" lazy-validation>
-            <v-text-field label="ID канала" v-model="search" :rules="searchRules" required></v-text-field>
-            <v-btn @click="submit" :disabled="!valid">Добавить</v-btn>
-            <v-alert type="success" dismissible v-model="success.alert" transition="scale-transition">
-              {{success.message}}
-            </v-alert>
-            <v-alert type="error" dismissible v-model="error.alert" transition="scale-transition">
-              {{error.message}}
-            </v-alert>
-          </v-form>
+          <add-channel-form @event="addChannel" v-bind="{success, error}"></add-channel-form>
         </v-flex>
         <!-- Таблица рейтинга -->
         <v-flex xs12>
@@ -78,9 +69,6 @@ export default {
   data() {
     return {
       title: 'YouTubeCC',
-      valid: true,
-      search: '', // Поле ввода
-      searchRules: [v => !!v || 'Укажите ID канала'],
       myChannelID: '', // ID выбранного канала
       channelsIDs: [], // Массив с ID каналов
       channels: [], // Массив с объектами Channel
@@ -235,12 +223,6 @@ export default {
       this.channels = this.channels.filter(item => item.id !== channel.id);
       this.channelsIDs = this.channelsIDs.filter(item => item !== channel.id);
       this.saveChannels();
-    },
-    submit() {
-      if (this.$refs.form.validate()) {
-        this.addChannel(this.search);
-        this.$refs.form.reset();
-      }
     },
   },
 };
