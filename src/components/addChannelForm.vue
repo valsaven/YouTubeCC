@@ -23,7 +23,7 @@ export default {
   methods: {
     submit() {
       if (this.$refs.form.validate()) {
-        this.$emit('event', this.search);
+        this.$emit('submit', this.search);
         this.$refs.form.reset();
       }
     },
