@@ -1,5 +1,5 @@
 <template>
-  <v-list subheader>
+  <v-list subheader :class="{ 'pulse': animated }" @animationend="animated = false">
     <v-subheader>Текущий рейтинг</v-subheader>
     <v-list-tile avatar v-for="(channel, index) in orderedChannels" :key="channel.id" :class="{ 'amber lighten-1': channel.id === myChannelID }">
       <v-list-tile class="mr-4">{{index}}</v-list-tile>
@@ -64,6 +64,7 @@ export default {
       channels: [], // Массив с объектами Channel
       apiKey: 'AIzaSyCZtVMiNePq-6ag3d2MgJcSNVN_5b-t5e0',
       timer: '',
+      animated: false,
     };
   },
   computed: {
@@ -178,6 +179,7 @@ export default {
       this.timer = setInterval(() => {
         this.channels = updateChannels(this.channels);
         this.saveChannels();
+        this.animate();
       }, 10000);
     },
     selectChannel(channel) {
@@ -192,6 +194,31 @@ export default {
       this.channelsIDs = this.channelsIDs.filter(item => item !== channel.id);
       this.saveChannels();
     },
+    animate() {
+      this.animated = true;
+      setTimeout(() => {
+        this.animated = false;
+      }, 2000);
+    },
   },
 };
 </script>
+
+<style scoped>
+.pulse {
+  box-shadow: 0 0 0 rgba(0, 10, 50, 0.4);
+  animation: pulse 2s ease-in;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 10, 50, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 10, 50, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 10, 50, 0);
+  }
+}
+</style>
