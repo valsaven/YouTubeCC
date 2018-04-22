@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       valid: true,
-      search: 'UC-lHJZR3Gqxm24_Vd_AJ5Yw', // Поле ввода
+      search: '', // Поле ввода
       searchRules: [v => !!v || 'Укажите ID канала'],
     };
   },
