@@ -1,5 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
   entry: './src/main.js',
@@ -50,5 +51,8 @@ module.exports = {
   performance: {
     hints: false,
   },
+  plugins: [
+    new VueLoaderPlugin(),
+  ],
   // devtool: '#eval-source-map',
 };
