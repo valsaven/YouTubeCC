@@ -1,6 +1,6 @@
 # YouTubeCC
 
-Рейтинг YouTube каналов по кол-ву подписчиков с их автоматическим обновлением.
+YouTube channels rankings by number of subscribers with auto-update.
 
 ## Preview
 
