@@ -1,28 +1,60 @@
 <template>
-  <v-list subheader :class="{ 'pulse': animated }" @animationend="animated = false">
+  <v-list
+    subheader
+    :class="{ 'pulse': animated }"
+    @animationend="animated = false"
+  >
     <v-subheader>Текущий рейтинг</v-subheader>
-    <v-list-tile avatar v-for="(channel, index) in orderedChannels" :key="channel.id" :class="{ 'amber lighten-1': channel.id === myChannelID }">
-      <v-list-tile class="mr-4">{{index}}</v-list-tile>
+    <v-list-tile
+      v-for="(channel, index) in orderedChannels"
+      :key="channel.id"
+      avatar
+      :class="{ 'amber lighten-1': channel.id === myChannelID }"
+    >
+      <v-list-tile class="mr-4">
+        {{ index }}
+      </v-list-tile>
       <!-- Аватарка канала -->
       <v-list-tile-action>
-        <v-btn icon @click="selectChannel(channel)">
-          <v-avatar :tile="tile" class="grey lighten-4">
-            <img :src="channel.thumbnailUrl" alt="avatar">
+        <v-btn
+          icon
+          @click="selectChannel(channel)"
+        >
+          <v-avatar
+            :tile="tile"
+            class="grey lighten-4"
+          >
+            <img
+              :src="channel.thumbnailUrl"
+              alt="avatar"
+            >
           </v-avatar>
         </v-btn>
       </v-list-tile-action>
       <!-- Основной блок информации о канале -->
       <v-list-tile-content>
-        <v-tooltip bottom max-width="400px">
-          <v-list-tile-title slot="activator">{{channel.subscriberCount}}</v-list-tile-title>
-          <v-list-tile-sub-title slot="activator">{{channel.title}}</v-list-tile-sub-title>
-          <span>{{channel.description}}</span>
+        <v-tooltip
+          bottom
+          max-width="400px"
+        >
+          <v-list-tile-title slot="activator">
+            {{ channel.subscriberCount }}
+          </v-list-tile-title>
+          <v-list-tile-sub-title slot="activator">
+            {{ channel.title }}
+          </v-list-tile-sub-title>
+          <span>{{ channel.description }}</span>
         </v-tooltip>
       </v-list-tile-content>
       <!-- Кнопка удаления -->
       <v-list-tile-action v-if="channel.id !== myChannelID">
-        <v-btn icon @click="removeChannel(channel)">
-          <v-icon color="red lighten-1">remove_circle</v-icon>
+        <v-btn
+          icon
+          @click="removeChannel(channel)"
+        >
+          <v-icon color="red lighten-1">
+            remove_circle
+          </v-icon>
         </v-btn>
       </v-list-tile-action>
     </v-list-tile>
@@ -43,20 +75,8 @@ class Channel {
 }
 
 export default {
-  name: 'channels-list',
+  name: 'ChannelsList',
   props: ['tile', 'success', 'error'],
-  created() {
-    const myChannelID = JSON.parse(localStorage.getItem('myChannelID'));
-    const channelsIDs = JSON.parse(localStorage.getItem('channelsIDs'));
-    const channels = JSON.parse(localStorage.getItem('channels'));
-
-    if (myChannelID) this.myChannelID = myChannelID;
-    if (channelsIDs) this.channelsIDs = channelsIDs;
-    if (channels) {
-      this.channels = channels;
-      this.updateSubs();
-    }
-  },
   data() {
     return {
       myChannelID: '', // ID выбранного канала
@@ -72,12 +92,24 @@ export default {
       return this.myChannelID.length !== 0;
     },
     orderedChannels() {
-      return this.channels
-        .sort((a, b) => {
-          return Number(a.subscriberCount) - Number(b.subscriberCount);
-        })
+      const channels = [...this.channels];
+
+      return channels
+        .sort((a, b) => Number(a.subscriberCount) - Number(b.subscriberCount))
         .reverse();
     },
+  },
+  created() {
+    const myChannelID = JSON.parse(localStorage.getItem('myChannelID'));
+    const channelsIDs = JSON.parse(localStorage.getItem('channelsIDs'));
+    const channels = JSON.parse(localStorage.getItem('channels'));
+
+    if (myChannelID) this.myChannelID = myChannelID;
+    if (channelsIDs) this.channelsIDs = channelsIDs;
+    if (channels) {
+      this.channels = channels;
+      this.updateSubs();
+    }
   },
   methods: {
     saveChannels() {
@@ -87,7 +119,7 @@ export default {
     saveUserChannel() {
       localStorage.setItem('myChannelID', JSON.stringify(this.myChannelID));
     },
-    getChannelInfo: async function(id) {
+    async getChannelInfo(id) {
       try {
         const part = 'id,snippet,statistics';
         const res = await axios.get(
@@ -95,18 +127,24 @@ export default {
             this.apiKey
           }`,
         );
-        const data = res.data;
+        const { data } = res;
 
         if (data.items.length) {
           const channel = data.items[0];
-          const id = channel.id;
-          const title = channel.snippet.title;
-          const description = channel.snippet.description;
+          const { channelID } = channel;
+          const { title } = channel.snippet;
+          const { description } = channel.snippet;
           const thumbnailUrl = channel.snippet.thumbnails.default.url;
           const subscriberCount = Number(channel.statistics.subscriberCount);
 
-          this.channelsIDs.push(id);
-          this.channels.push(new Channel(id, title, description, thumbnailUrl, subscriberCount));
+          this.channelsIDs.push(channelID);
+          this.channels.push(new Channel(
+            channelID,
+            title,
+            description,
+            thumbnailUrl,
+            subscriberCount,
+          ));
 
           // Сообщение об успехе
           this.success.message = 'Канал успешно добавлен.';
@@ -143,21 +181,21 @@ export default {
         this.getChannelInfo(id);
       }
     },
-    updateChannel: async function(channel) {
+    async updateChannel(channel) {
       try {
-        let res = await axios.get(
+        const res = await axios.get(
           `https://www.googleapis.com/youtube/v3/channels?part=id,statistics&id=${
             channel.id
           }&fields=items(id,statistics/subscriberCount)&key=${this.apiKey}`,
         );
 
-        let data = res.data;
+        const { data } = res;
         let subscriberCount = null;
 
         // Данные получены
         if (data.items.length) {
-          let channel = data.items[0];
-          subscriberCount = channel.statistics.subscriberCount;
+          const updatedChannel = data.items[0];
+          ({ subscriberCount } = updatedChannel.statistics);
         } else {
           throw new Error('Ошибка при получении данных с сервера.');
         }
@@ -168,8 +206,8 @@ export default {
       }
     },
     updateSubs() {
-      const updateChannels = channels => {
-        for (let i = 0; i < channels.length; i++) {
+      const updateChannels = (channels) => {
+        for (let i = 0; i < channels.length; i += 1) {
           this.updateChannel(channels[i]);
         }
 
@@ -206,13 +244,13 @@ export default {
 
 <style scoped>
 .pulse {
-  box-shadow: 0 0 0 rgba(0, 10, 50, 0.4);
+  box-shadow: 0 0 0 rgba(0, 10, 50, .4);
   animation: pulse 2s ease-in;
 }
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(0, 10, 50, 0.4);
+    box-shadow: 0 0 0 0 rgba(0, 10, 50, .4);
   }
   70% {
     box-shadow: 0 0 0 10px rgba(0, 10, 50, 0);

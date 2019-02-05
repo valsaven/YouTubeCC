@@ -1,19 +1,38 @@
 <template>
   <div id="app">
     <v-app>
-      <v-container fill-height grid-list-md text-xs-center>
-        <v-layout column align-center justify-center>
+      <v-container
+        fill-height
+        grid-list-md
+        text-xs-center
+      >
+        <v-layout
+          column
+          align-center
+          justify-center
+        >
           <!-- Header -->
           <v-flex xs2>
-            <h1 class="header-title" @click="tile = !tile">YouTubeCC</h1>
+            <h1
+              class="header-title"
+              @click="tile = !tile"
+            >
+              YouTubeCC
+            </h1>
           </v-flex>
           <!-- Форма добавления канала -->
           <v-flex xs4>
-            <add-channel-form @submit="addChannel" v-bind="{success, error}"></add-channel-form>
+            <add-channel-form
+              v-bind="{success, error}"
+              @submit="addChannel"
+            />
           </v-flex>
           <!-- Таблица рейтинга -->
           <v-flex xs12>
-            <channels-list ref="chList" v-bind="{tile, success, error}"></channels-list>
+            <channels-list
+              ref="chList"
+              v-bind="{tile, success, error}"
+            />
           </v-flex>
         </v-layout>
       </v-container>
@@ -22,12 +41,11 @@
 </template>
 
 <script>
-import axios from 'axios';
-import addChannelForm from './components/addChannelForm';
-import channelsList from './components/channelsList';
+import addChannelForm from './components/addChannelForm.vue';
+import channelsList from './components/channelsList.vue';
 
 export default {
-  name: 'app',
+  name: 'App',
   components: { addChannelForm, channelsList },
   data() {
     return {

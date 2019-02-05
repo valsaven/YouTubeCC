@@ -1,16 +1,30 @@
 <template>
-  <v-form v-model="valid" ref="form" lazy-validation>
-    <v-text-field label="ID канала" v-model="search" :rules="searchRules" required></v-text-field>
-    <v-btn @click="submit" :disabled="!valid">Добавить</v-btn>
-    <alert-box v-bind="{success, error}"></alert-box>
+  <v-form
+    ref="form"
+    v-model="valid"
+    lazy-validation
+  >
+    <v-text-field
+      v-model="search"
+      label="ID канала"
+      :rules="searchRules"
+      required
+    />
+    <v-btn
+      :disabled="!valid"
+      @click="submit"
+    >
+      Добавить
+    </v-btn>
+    <alert-box v-bind="{success, error}" />
   </v-form>
 </template>
 
 <script>
-import alertBox from './alertBox';
+import alertBox from './alertBox.vue';
 
 export default {
-  name: 'add-channel-form',
+  name: 'AddChannelForm',
   components: { alertBox },
   props: ['success', 'error'],
   data() {
