@@ -5,17 +5,17 @@
     @animationend="animated = false"
   >
     <v-subheader>Текущий рейтинг</v-subheader>
-    <v-list-tile
+    <v-list-item
       v-for="(channel, index) in orderedChannels"
       :key="channel.id"
       avatar
       :class="{ 'amber lighten-1': channel.id === myChannelID }"
     >
-      <v-list-tile class="mr-4">
+      <div class="channel__index">
         {{ index }}
-      </v-list-tile>
+      </div>
       <!-- Аватарка канала -->
-      <v-list-tile-action>
+      <v-list-item-action class="channel__avatar">
         <v-btn
           icon
           @click="selectChannel(channel)"
@@ -30,24 +30,24 @@
             >
           </v-avatar>
         </v-btn>
-      </v-list-tile-action>
+      </v-list-item-action>
       <!-- Основной блок информации о канале -->
-      <v-list-tile-content>
+      <v-list-item-content>
         <v-tooltip
           bottom
           max-width="400px"
         >
-          <v-list-tile-title slot="activator">
+          <v-list-item-title slot="activator">
             {{ channel.subscriberCount }}
-          </v-list-tile-title>
-          <v-list-tile-sub-title slot="activator">
+          </v-list-item-title>
+          <v-list-item-subtitle slot="activator">
             {{ channel.title }}
-          </v-list-tile-sub-title>
+          </v-list-item-subtitle>
           <span>{{ channel.description }}</span>
         </v-tooltip>
-      </v-list-tile-content>
+      </v-list-item-content>
       <!-- Кнопка удаления -->
-      <v-list-tile-action v-if="channel.id !== myChannelID">
+      <v-list-item-action v-if="channel.id !== myChannelID">
         <v-btn
           icon
           @click="removeChannel(channel)"
@@ -56,8 +56,8 @@
             remove_circle
           </v-icon>
         </v-btn>
-      </v-list-tile-action>
-    </v-list-tile>
+      </v-list-item-action>
+    </v-list-item>
   </v-list>
 </template>
 
@@ -119,11 +119,11 @@ export default {
     saveUserChannel() {
       localStorage.setItem('myChannelID', JSON.stringify(this.myChannelID));
     },
-    async getChannelInfo(id) {
+    async getChannelInfo(channelID) {
       try {
         const part = 'id,snippet,statistics';
         const res = await axios.get(
-          `https://www.googleapis.com/youtube/v3/channels?part=${part}&id=${id}&fields=items(${part})&key=${
+          `https://www.googleapis.com/youtube/v3/channels?part=${part}&id=${channelID}&fields=items(${part})&key=${
             this.apiKey
           }`,
         );
@@ -131,15 +131,15 @@ export default {
 
         if (data.items.length) {
           const channel = data.items[0];
-          const { channelID } = channel;
+          const { id } = channel;
           const { title } = channel.snippet;
           const { description } = channel.snippet;
           const thumbnailUrl = channel.snippet.thumbnails.default.url;
           const subscriberCount = Number(channel.statistics.subscriberCount);
 
-          this.channelsIDs.push(channelID);
+          this.channelsIDs.push(id);
           this.channels.push(new Channel(
-            channelID,
+            id,
             title,
             description,
             thumbnailUrl,
@@ -243,6 +243,16 @@ export default {
 </script>
 
 <style scoped>
+.channel__index {
+  width: 24px;
+}
+
+.channel__avatar {
+  height: 48px;
+  margin: 0;
+  width: 48px;
+}
+
 .pulse {
   box-shadow: 0 0 0 rgba(0, 10, 50, .4);
   animation: pulse 2s ease-in;
@@ -252,9 +262,11 @@ export default {
   0% {
     box-shadow: 0 0 0 0 rgba(0, 10, 50, .4);
   }
+
   70% {
     box-shadow: 0 0 0 10px rgba(0, 10, 50, 0);
   }
+
   100% {
     box-shadow: 0 0 0 0 rgba(0, 10, 50, 0);
   }
