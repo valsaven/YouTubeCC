@@ -82,7 +82,7 @@ export default {
       myChannelID: '', // ID выбранного канала
       channelsIDs: [], // Массив с ID каналов
       channels: [], // Массив с объектами Channel
-      apiKey: 'AIzaSyCZtVMiNePq-6ag3d2MgJcSNVN_5b-t5e0',
+      apiKey: 'AIzaSyAkwu99r2rSo2XZVcr9bfZCcRLP9cbE8s4',
       timer: '',
       animated: false,
     };
@@ -214,11 +214,12 @@ export default {
         return channels;
       };
 
+      // TODO: В localstorage повесить время последнего запроса обновлений каналов. Если с того момента прошло 6 часов - обновить
       this.timer = setInterval(() => {
         this.channels = updateChannels(this.channels);
         this.saveChannels();
         this.animate();
-      }, 10000);
+      }, 300000);
     },
     selectChannel(channel) {
       // Можно было бы убрать, но хочется иметь возможность не выделять какой-либо канал вообще
