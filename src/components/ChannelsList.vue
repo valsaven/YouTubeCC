@@ -1,10 +1,10 @@
 <template>
   <v-list
-    subheader
+    class="v-subheader"
     :class="{ 'pulse': animated }"
     @animationend="animated = false"
   >
-    <v-subheader>Текущий рейтинг</v-subheader>
+    <div class="v-subheader">Текущий рейтинг</div>
     <v-list-item
       v-for="(channel, index) in orderedChannels"
       :key="channel.id"
@@ -49,22 +49,26 @@
       <!-- Кнопка удаления -->
       <v-list-item-action v-if="channel.id !== myChannelID">
         <v-btn
-          icon
+          icon="mdi-minus-circle"
+          color="red lighten-1"
           @click="removeChannel(channel)"
-        >
-          <v-icon color="red lighten-1">
-            remove_circle
-          </v-icon>
-        </v-btn>
+        />
       </v-list-item-action>
     </v-list-item>
   </v-list>
 </template>
 
-<script>
+<script lang="ts">
 import axios from 'axios';
+import { defineComponent } from 'vue';
 
 class Channel {
+  id: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  subscriberCount: number;
+
   constructor(id = '', title = '', description = '', thumbnailUrl = '', subscriberCount = 0) {
     this.id = id;
     this.title = title;
@@ -74,24 +78,28 @@ class Channel {
   }
 }
 
-export default {
+export default defineComponent({
   name: 'ChannelsList',
+
   props: ['tile', 'success', 'error'],
+
   data() {
     return {
       myChannelID: '', // ID выбранного канала
-      channelsIDs: [], // Массив с ID каналов
-      channels: [], // Массив с объектами Channel
-      apiKey: 'AIzaSyAkwu99r2rSo2XZVcr9bfZCcRLP9cbE8s4',
-      timer: '',
+      channelsIDs: [] as string[], // Массив с ID каналов
+      channels: [] as Channel[], // Массив с объектами Channel
+      apiKey: 'AIzaSyAb3msPiGuwpjDXOCo3Hpau2vz3zKMkHfA',
+      timer: 0,
       animated: false,
     };
   },
+
   computed: {
-    isMyChannelExists() {
+    isMyChannelExists(): boolean {
       return this.myChannelID.length !== 0;
     },
-    orderedChannels() {
+
+    orderedChannels(): any[] {
       const channels = [...this.channels];
 
       return channels
@@ -99,27 +107,18 @@ export default {
         .reverse();
     },
   },
-  created() {
-    const myChannelID = JSON.parse(localStorage.getItem('myChannelID'));
-    const channelsIDs = JSON.parse(localStorage.getItem('channelsIDs'));
-    const channels = JSON.parse(localStorage.getItem('channels'));
 
-    if (myChannelID) this.myChannelID = myChannelID;
-    if (channelsIDs) this.channelsIDs = channelsIDs;
-    if (channels) {
-      this.channels = channels;
-      this.updateSubs();
-    }
-  },
   methods: {
     saveChannels() {
       localStorage.setItem('channels', JSON.stringify(this.channels));
       localStorage.setItem('channelsIDs', JSON.stringify(this.channelsIDs));
     },
+
     saveUserChannel() {
       localStorage.setItem('myChannelID', JSON.stringify(this.myChannelID));
     },
-    async getChannelInfo(channelID) {
+
+    async getChannelInfo(channelID: string) {
       try {
         const part = 'id,snippet,statistics';
         const res = await axios.get(
@@ -167,7 +166,8 @@ export default {
         console.error(e);
       }
     },
-    addChannel(id) {
+
+    addChannel(id: string) {
       // Check for duplicates
       if (this.channelsIDs.includes(id)) {
         const errorMsg = 'Канал уже есть в списке.';
@@ -181,7 +181,8 @@ export default {
         this.getChannelInfo(id);
       }
     },
-    async updateChannel(channel) {
+
+    async updateChannel(channel: Channel) {
       try {
         const res = await axios.get(
           `https://www.googleapis.com/youtube/v3/channels?part=id,statistics&id=${
@@ -205,8 +206,9 @@ export default {
         console.error(e);
       }
     },
+
     updateSubs() {
-      const updateChannels = (channels) => {
+      const updateChannels = (channels: Channel[]) => {
         for (let i = 0; i < channels.length; i += 1) {
           this.updateChannel(channels[i]);
         }
@@ -221,26 +223,47 @@ export default {
         this.animate();
       }, 300000);
     },
-    selectChannel(channel) {
+
+    selectChannel(channel: Channel) {
       // Можно было бы убрать, но хочется иметь возможность не выделять какой-либо канал вообще
       this.isMyChannelExists ? (this.myChannelID = '') : (this.myChannelID = channel.id);
 
       this.saveUserChannel();
       this.saveChannels();
     },
-    removeChannel(channel) {
+
+    removeChannel(channel: Channel) {
       this.channels = this.channels.filter(item => item.id !== channel.id);
       this.channelsIDs = this.channelsIDs.filter(item => item !== channel.id);
       this.saveChannels();
     },
+
     animate() {
       this.animated = true;
       setTimeout(() => {
         this.animated = false;
       }, 2000);
     },
+
+    getAndSetDataFromLocalstorage(key: 'myChannelID' | 'channelsIDs' | 'channels') {
+      const data = localStorage.getItem(key);
+
+      if (data && JSON.parse(data)) {
+        this[key] = JSON.parse(data);
+
+        if (key === 'channels') {
+          this.updateSubs();
+        }
+      }
+    }
   },
-};
+
+  created() {
+    this.getAndSetDataFromLocalstorage('myChannelID');
+    this.getAndSetDataFromLocalstorage('channelsIDs');
+    this.getAndSetDataFromLocalstorage('channels');
+  },
+});
 </script>
 
 <style scoped>
