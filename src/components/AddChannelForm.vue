@@ -20,24 +20,27 @@
   </v-form>
 </template>
 
-<script>
-import alertBox from './alertBox.vue';
+<script lang="ts">
+import AlertBox from './AlertBox.vue';
 
 export default {
   name: 'AddChannelForm',
-  components: { alertBox },
+  components: { AlertBox },
   props: ['success', 'error'],
   data() {
     return {
       valid: true,
       search: '', // Поле ввода
-      searchRules: [v => !!v || 'Укажите ID канала'],
+      searchRules: [(v: string) => !!v || 'Укажите ID канала'],
     };
   },
   methods: {
     submit() {
+      //@ts-ignore
       if (this.$refs.form.validate()) {
+        //@ts-ignore
         this.$emit('submit', this.search);
+        //@ts-ignore
         this.$refs.form.reset();
       }
     },

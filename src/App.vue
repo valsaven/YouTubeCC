@@ -1,52 +1,46 @@
 <template>
-  <div id="app">
     <v-app>
-      <v-container
-        fill-height
-        grid-list-md
-        text-xs-center
+      <v-card
+        class="d-flex flex-column fill-height grid-list-md text-xl-center"
       >
-        <v-layout
-          column
-          align-center
-          justify-center
+        <v-card
+          class="d-flex flex-column align-center justify-center"
         >
           <!-- Header -->
-          <v-flex xs2>
+          <div class="d-flex xs2">
             <h1
               class="header-title"
               @click="tile = !tile"
             >
               YouTubeCC
             </h1>
-          </v-flex>
+          </div>
           <!-- Форма добавления канала -->
-          <v-flex xs4>
+          <div class="d-flex xs4">
             <add-channel-form
-              v-bind="{success, error}"
+              v-bind="{ success, error }"
               @submit="addChannel"
             />
-          </v-flex>
+          </div>
           <!-- Таблица рейтинга -->
-          <v-flex xs12>
+          <div class="d-flex xs12">
             <channels-list
               ref="chList"
-              v-bind="{tile, success, error}"
+              v-bind="{ tile, success, error }"
             />
-          </v-flex>
-        </v-layout>
-      </v-container>
+          </div>
+        </v-card>
+      </v-card>
     </v-app>
-  </div>
 </template>
 
-<script>
-import addChannelForm from './components/addChannelForm.vue';
-import channelsList from './components/channelsList.vue';
+<script lang="ts">
+import AddChannelForm from './components/AddChannelForm.vue';
+import ChannelsList from './components/ChannelsList.vue';
 
 export default {
   name: 'App',
-  components: { addChannelForm, channelsList },
+  components: { AddChannelForm, ChannelsList },
   data() {
     return {
       title: 'YouTubeCC',
@@ -62,17 +56,21 @@ export default {
     };
   },
   methods: {
-    addChannel(id) {
+    addChannel(id: string) {
+      //@ts-ignore
       this.$refs.chList.addChannel(id);
     },
   },
 };
 </script>
 
-<style scoped>
-@import '../node_modules/vuetify/dist/vuetify.min.css';
-
-.header-title {
-  cursor: pointer;
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
 }
 </style>

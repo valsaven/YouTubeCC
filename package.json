@@ -1,49 +1,26 @@
 {
   "name": "youtubecc",
   "description": "Compare channels",
-  "version": "2.1.5",
+  "version": "3.0.0",
   "author": "Val Saven <val.saven@gmail.com>",
   "license": "GPL-3.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "material-design-icons-iconfont": "^6.1.0",
-    "vue": "^2.6.12",
-    "vuetify": "^2.4.3"
+    "@mdi/font": "6.7.96",
+    "axios": "0.27.2",
+    "material-design-icons-iconfont": "6.7.0",
+    "vue": "3.2.36",
+    "vuetify": "3.0.0-beta.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.11",
-    "@vue/cli-service": "^4.5.11",
-    "vue-cli-plugin-vuetify": "^2.1.0",
-    "vue-template-compiler": "^2.6.12"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/recommended",
-      "@vue/airbnb"
-    ],
-    "rules": {},
-    "parserOptions": {
-      "parser": "babel-eslint"
-    }
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+    "@vitejs/plugin-vue": "2.3.3",
+    "typescript": "4.7.2",
+    "vite": "2.9.9",
+    "vue-tsc": "0.35.2"
+  }
 }

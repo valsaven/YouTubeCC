@@ -8,6 +8,7 @@
     >
       {{ success.message }}
     </v-alert>
+
     <v-alert
       v-model="error.alert"
       type="error"
@@ -19,9 +20,13 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'AlertBox',
-  props: ['success', 'error'],
-};
+<script setup lang="ts">
+import { ref } from 'vue'
+
+defineProps<{
+  success: any,
+  error: any,
+}>()
+
+const count = ref(0)
 </script>

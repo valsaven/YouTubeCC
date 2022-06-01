@@ -22,16 +22,10 @@ YouTube channels rankings by number of subscribers with auto-update.
 npm i
 
 # Compiles and hot-reloads for development
-npm run serve
+npm run dev
 
 # Compiles and minifies for production
 npm run build
-
-# Run your tests
-npm run test
-
-# Lints and fixes files
-npm run lint
 ```
 
 #### License
