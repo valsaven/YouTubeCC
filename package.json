@@ -17,8 +17,8 @@
     "vuetify": "^2.4.3"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.11",
-    "@vue/cli-service": "^4.5.11",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "vue-cli-plugin-vuetify": "^2.1.0",
     "vue-template-compiler": "^2.6.12"
   },
